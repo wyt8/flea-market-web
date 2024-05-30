@@ -1,23 +1,9 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+// import { ref, watch, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { MessagePlugin, DialogPlugin } from 'tdesign-vue-next'
 import router from '@/router/index'
-import { SunnyIcon, MoonIcon } from 'tdesign-icons-vue-next'
 const userStore = useUserStore()
-
-// 黑夜模式切换
-const switchTheme = (newValue) => {
-  if (newValue == true) {
-    // 设置暗色模式
-    document.documentElement.setAttribute('theme-mode', 'dark')
-    document.documentElement.setAttribute('class', 'dark')
-  } else {
-    // 重置为浅色模式
-    document.documentElement.removeAttribute('theme-mode')
-    document.documentElement.removeAttribute('class')
-  }
-}
 
 const logout = () => {
   const confirmDialog = DialogPlugin.confirm({
@@ -36,6 +22,10 @@ const login = () => {
   router.push({ name: 'login' })
 }
 
+const register = () => {
+  router.push({ name: 'register' })
+}
+
 const viewSpace = () => {
   router.push({ name: 'space', params: { uid: userStore.userInfo.uid } })
 }
@@ -47,31 +37,29 @@ const viewSpace = () => {
       <div class="logo">
         <img src="@/assets/imgs/logo.png" />
       </div>
+      <div class="name">
+        <div class="main-name">BIT跳蚤市场</div>
+        <div class="sub-name">By 开发一部</div>
+      </div>
       <nav class="menu">
         <ul>
           <li>
-            <RouterLink to="/moment" active-class="active">时刻</RouterLink>
+            <RouterLink to="/index" active-class="active"
+              ><span class="iconfont icon-shouye"></span>首页</RouterLink
+            >
           </li>
           <li>
-            <RouterLink to="/topic" active-class="active">话题</RouterLink>
+            <RouterLink to="/goods" active-class="active"
+              ><span class="iconfont icon-jiaoyi"></span>二手市场</RouterLink
+            >
           </li>
-          <!-- <li>
-            <RouterLink to="/note" active-class="active">笔记</RouterLink>
-          </li> -->
+          <li>
+            <RouterLink to="/note" active-class="active"
+              ><span class="iconfont icon-xiaoxi"></span>消息</RouterLink
+            >
+          </li>
         </ul>
       </nav>
-
-      <!-- 黑暗模式切换开关 -->
-      <t-switch @change="switchTheme" class="switch-theme">
-        <template #label="slotProps">
-          <template v-if="slotProps.value">
-            <MoonIcon />
-          </template>
-          <template v-else>
-            <SunnyIcon />
-          </template>
-        </template>
-      </t-switch>
 
       <div class="user">
         <!-- 登录成功的弹出窗 -->
@@ -113,28 +101,11 @@ const viewSpace = () => {
           </template>
         </t-popup>
 
-        <!-- 没有登录的弹出窗 -->
-        <t-popup v-else>
-          <template #default>
-            <t-avatar size="large">登录</t-avatar>
-          </template>
-          <template #content>
-            <div class="popover-container">
-              <div class="description">您还没有登录：</div>
-              <ul class="menu">
-                <li>
-                  <button @click="login">
-                    <span>
-                      <span class="iconfont icon-login"></span>
-                      <span class="btn-text">立即登录/注册</span>
-                    </span>
-                    <span class="iconfont icon-right"></span>
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </template>
-        </t-popup>
+        <!-- 没有登录时的按钮组 -->
+        <div class="btn-group" v-else>
+          <button @click="register">注册</button>
+          <button @click="login">登录</button>
+        </div>
       </div>
     </div>
   </header>
@@ -142,9 +113,8 @@ const viewSpace = () => {
 
 <style scoped lang="scss">
 header {
-  box-sizing: border-box;
-  height: 60px;
-  background-color: whitesmoke;
+  height: 125px;
+  background: linear-gradient(70deg, rgba(59, 182, 254, 1) -20%, rgba(142, 76, 183, 1) 30%);
   border-bottom: 1px solid #ccc;
   box-shadow: 0 1px 5px 0px rgba($color: #000000, $alpha: 0.2);
   position: sticky;
@@ -152,8 +122,8 @@ header {
   z-index: 100;
 
   .wrapper {
-    padding: 0 20px;
-    max-width: 1000px;
+    padding: 0 40px;
+    max-width: 1400px;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -163,20 +133,29 @@ header {
 
 .logo {
   img {
-    height: 50px;
+    height: 67px;
     vertical-align: middle;
   }
-  @media (max-width: 700px) {
-    display: none;
+}
+
+.name {
+  margin-left: 10px;
+  .main-name {
+    font-size: 36px;
+    color: white;
+    font-weight: bold;
+  }
+
+  .sub-name {
+    font-size: 16px;
+    color: #dedede;
   }
 }
 
 .menu {
   flex: 1;
   margin-left: 20px;
-  @media (max-width: 700px) {
-    margin-left: 0;
-  }
+  height: 100%;
 
   ul {
     margin: 0;
@@ -185,65 +164,37 @@ header {
     flex-wrap: nowrap;
     list-style: none;
     align-items: center;
-    gap: 10px;
-    @media (max-width: 700px) {
-      gap: 5px;
-    }
-
+    gap: 20px;
     li {
-      height: 60px;
+      height: 100%;
       position: relative;
 
       a {
-        color: #333;
+        color: white;
         text-decoration: none;
-        line-height: 60px;
+        line-height: 125px;
         display: block;
-        font-size: 20px;
-        padding: 0 30px;
+        font-size: 28px;
+        padding: 0 15px;
         transition: all 0.6s;
-        font-weight: 600;
 
-        @media (max-width: 700px) {
-          padding: 0 15px;
+        .iconfont {
+          font-size: 28px;
+          margin-right: 8px;
+          color: black;
         }
       }
 
       .active {
-        color: #009944;
+        color: orange;
+        background-color: white;
       }
 
       &:hover a {
-        color: #009944;
-      }
-
-      &:hover::before {
-        left: 0;
-        right: 0;
-      }
-
-      &::before {
-        content: '';
-        position: absolute;
-        z-index: -1;
-        left: 51%;
-        right: 51%;
-        bottom: 0;
-        background: #009944;
-        height: 5px;
-        -webkit-transition-property: left, right;
-        transition-property: left, right;
-        -webkit-transition-duration: 0.3s;
-        transition-duration: 0.3s;
-        -webkit-transition-timing-function: ease-out;
-        transition-timing-function: ease-out;
+        color: orange;
       }
     }
   }
-}
-
-.switch-theme {
-  margin-right: 10px;
 }
 
 .popover-container {
@@ -274,10 +225,6 @@ header {
       font-size: 10px;
       color: #ccc;
     }
-  }
-
-  .status {
-    // 空
   }
 
   .menu {
@@ -313,23 +260,26 @@ header {
   }
 }
 
-.dark {
-  header {
-    background-color: #333;
-    box-shadow: 0 1px 5px 0px rgba($color: #fff, $alpha: 0.2);
-    border-bottom: 1px solid gray;
-  }
+.btn-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 
-  .menu ul li a {
+  button {
+    width: 150px;
+    height: 65px;
+    background: linear-gradient(90deg, #fe564d 0%, #f9ca26 100%);
+    border: none;
+    border-radius: 5px;
+    font-size: 28px;
     color: white;
+    cursor: pointer;
+    transition: all 0.3s;
   }
 
-  .menu ul li .active {
-    color: #026937;
-  }
-
-  .menu button {
-    color: #ccc;
+  button:hover {
+    box-shadow: 0 0 10px 2px rgba($color: #000000, $alpha: 0.3);
+    border: 1px solid #ccc;
   }
 }
 </style>
