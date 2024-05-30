@@ -11,7 +11,11 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "axios": "^1.7.2",
+    "js-md5": "^0.8.3",
     "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^3.2.1",
+    "tdesign-vue-next": "^1.9.5",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
@@ -22,6 +26,10 @@
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.23.0",
     "prettier": "^3.2.5",
+    "sass": "^1.77.3",
+    "scss": "^0.2.4",
+    "unplugin-auto-import": "^0.17.6",
+    "unplugin-vue-components": "^0.27.0",
     "vite": "^5.2.8"
   }
 }
