@@ -15,8 +15,11 @@
     "js-md5": "^0.8.3",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
+    "swiper": "^11.1.4",
     "tdesign-vue-next": "^1.9.5",
+    "uuid": "^9.0.1",
     "vue": "^3.4.21",
+    "vue-final-modal": "^4.5.4",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {

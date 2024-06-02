@@ -8,7 +8,7 @@ const userStore = useUserStore()
 const logout = () => {
   const confirmDialog = DialogPlugin.confirm({
     header: '是否退出登录',
-    body: '退出登录后将不能发表内容、评论和点赞！',
+    body: '退出登录后将不能发布商品和聊天！',
     theme: 'warning',
     onConfirm: () => {
       userStore.clearUserInfo()
@@ -54,7 +54,7 @@ const viewSpace = () => {
             >
           </li>
           <li>
-            <RouterLink to="/note" active-class="active"
+            <RouterLink to="/message" active-class="active"
               ><span class="iconfont icon-xiaoxi"></span>消息</RouterLink
             >
           </li>
@@ -65,16 +65,16 @@ const viewSpace = () => {
         <!-- 登录成功的弹出窗 -->
         <t-popup v-if="userStore.userInfo.token && userStore.userInfo.token.length !== 0">
           <template #default>
-            <t-avatar :image="userStore.userInfo.avatar" size="large"></t-avatar>
+            <t-avatar :image="userStore.userInfo.avatar_url" size="large"></t-avatar>
           </template>
           <template #content>
             <div class="popover-container">
               <div class="userinfo">
                 <div class="avatar">
-                  <img :src="userStore.userInfo.avatar" />
+                  <img :src="userStore.userInfo.avatar_url" />
                 </div>
-                <div class="nickname">{{ userStore.userInfo.nickname }}</div>
-                <div class="uid">UID: {{ userStore.userInfo.uid }}</div>
+                <div class="nickname">{{ userStore.userInfo.name }}</div>
+                <div class="uid">UID: {{ userStore.userInfo.user_id }}</div>
               </div>
               <div class="status"></div>
               <ul class="menu">
@@ -252,7 +252,7 @@ header {
       }
 
       &:hover {
-        background-color: green;
+        background-color: #fe742b;
         color: white;
         cursor: pointer;
       }

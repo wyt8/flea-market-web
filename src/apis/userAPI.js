@@ -1,23 +1,31 @@
 import httpInstance from '@/utils/http'
 import md5 from 'js-md5'
 
-const login = ({bitid, password}) => {
-    password = md5(password)
-    return httpInstance.post('/users/login', {
-        bitid,
-        password
-    })
+const login = ({ bit_id, password }) => {
+  password = md5(password)
+  return httpInstance.post('/users/login', {
+    bit_id,
+    password
+  })
 }
 
-const register = ({bitid, password}) => {
-    password = md5(password)
-    return httpInstance.post('/users/register', {
-        bitid,
-        password
-    })
+const register = ({ bit_id, password, verification_code }) => {
+  password = md5(password)
+  return httpInstance.post('/users/register', {
+    bit_id,
+    password,
+    verification_code
+  })
+}
+
+const sendVerificationCode = (bit_id) => {
+  return httpInstance.post('/verify', {
+    bit_id
+  })
 }
 
 export default {
-    login,
-    register
+  login,
+  register,
+  sendVerificationCode
 }

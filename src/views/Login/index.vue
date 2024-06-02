@@ -1,7 +1,45 @@
 <script setup>
+import { ref } from 'vue'
 import router from '@/router/index'
+import userAPI from '@/apis/userAPI'
+import { MessagePlugin } from 'tdesign-vue-next'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+
 const register = () => {
   router.push({ name: 'register' })
+}
+
+const form = ref({
+  bit_id: '',
+  password: ''
+})
+
+// 点击登录按钮的处理函数
+const loginHandle = async () => {
+  // 判断bit_id是否为10位数字
+  if (!/^\d{10}$/.test(form.value.bit_id)) {
+    MessagePlugin.warning('学号应为10位数字')
+    return
+  }
+  // 判断password是否合法
+  if (!/^(?=.*[a-zA-Z])(?=.*\d)[^\s]{8,18}$/.test(form.value.password)) {
+    MessagePlugin.warning('密码强度不够')
+    return
+  }
+
+  const res = await userAPI.login(form.value)
+  if (res.code == 0) {
+    MessagePlugin.success('登录成功')
+    userStore.setUserInfo(res.data)
+    router.push({ name: 'index' })
+    return
+  } else {
+    form.value.password = ''
+    MessagePlugin.error(res.msg)
+    return
+  }
 }
 </script>
 
@@ -16,19 +54,19 @@ const register = () => {
       <div class="form-line">
         <div class="name">学号：</div>
         <div class="input">
-          <input type="text" placeholder="请输入学号" />
+          <input type="text" placeholder="请输入学号" v-model="form.bit_id" />
         </div>
       </div>
       <div class="form-line">
         <div class="name">密码：</div>
         <div class="input">
-          <input type="password" placeholder="请输入密码" />
+          <input type="password" placeholder="请输入密码" v-model="form.password" />
         </div>
       </div>
     </div>
 
     <div class="btn-submit">
-      <button>立即登录</button>
+      <button @click="loginHandle">立即登录</button>
     </div>
 
     <div class="option">

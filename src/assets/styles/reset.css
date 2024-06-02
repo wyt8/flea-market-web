@@ -7,3 +7,9 @@
 body {
   background-color: #f9f8f2;
 }
+
+.modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

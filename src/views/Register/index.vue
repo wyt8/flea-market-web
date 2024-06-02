@@ -1,7 +1,83 @@
 <script setup>
+import { ref } from 'vue'
 import router from '@/router/index'
+import userAPI from '@/apis/userAPI'
+import { MessagePlugin } from 'tdesign-vue-next'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+
+// 跳转到登录页面
 const login = () => {
   router.push({ name: 'login' })
+}
+
+const form = ref({
+  bit_id: '',
+  password: '',
+  verification_code: ''
+})
+const confirmPassword = ref('')
+const checkAgreement = ref(false)
+// 点击注册按钮后的处理函数
+const registerHandle = async () => {
+  // 验证是否同意协议
+  if (!checkAgreement.value) {
+    MessagePlugin.warning('请同意协议')
+    return
+  }
+  // 验证确认密码和原来密码是否一致
+  if (confirmPassword.value !== form.value.password) {
+    MessagePlugin.warning('两次输入的密码不一致')
+    return
+  }
+  // 判断bit_id是否为10位数字
+  if (!/^\d{10}$/.test(form.value.bit_id)) {
+    MessagePlugin.warning('学号应为10位数字')
+    return
+  }
+  // 判断password是否合法
+  if (!/^(?=.*[a-zA-Z])(?=.*\d)[^\s]{8,18}$/.test(form.value.password)) {
+    MessagePlugin.warning('密码强度不够')
+    return
+  }
+  // 判断验证码格式是否正确
+  if (!/^\d{6}$/.test(form.value.verification_code)) {
+    MessagePlugin.warning('输入的验证码格式不正确')
+    return
+  }
+
+  const res = await userAPI.register(form.value)
+  if (res.code == 0) {
+    MessagePlugin.success('注册成功')
+    userStore.setUserInfo(res.data)
+    router.push({ name: 'index' })
+    return
+  } else {
+    form.value.password = ''
+    form.value.verification_code = ''
+    confirmPassword.value = ''
+    checkAgreement.value = false
+    MessagePlugin.error(res.msg)
+    return
+  }
+}
+
+// 发送邮箱验证码
+const sendVerificationCode = async () => {
+  // 判断bit_id是否为10为数字
+  if (!/\d{10}/.test(form.value.bit_id)) {
+    MessagePlugin.warning('学号应为10位数字')
+    return
+  }
+  const res = await userAPI.sendVerificationCode(form.value.bit_id)
+  if (res.code === 0) {
+    MessagePlugin.success('发送验证码成功')
+    return
+  } else {
+    MessagePlugin.warning(res.msg)
+    return
+  }
 }
 </script>
 
@@ -16,40 +92,44 @@ const login = () => {
       <div class="form-line">
         <div class="name">学号：</div>
         <div class="input">
-          <input type="text" placeholder="请输入学号" />
+          <input type="text" placeholder="请输入学号" v-model="form.bit_id" />
         </div>
         <div class="tip">10位数字</div>
         <div class="other">
-          <button>发送邮箱验证码</button>
+          <button @click="sendVerificationCode">发送邮箱验证码</button>
         </div>
       </div>
       <div class="form-line">
         <div class="name">邮箱验证码：</div>
         <div class="input">
-          <input type="text" placeholder="请输入收到的邮箱验证码" />
+          <input
+            type="text"
+            placeholder="请输入收到的邮箱验证码"
+            v-model="form.verification_code"
+          />
         </div>
       </div>
       <div class="form-line">
         <div class="name">设置密码：</div>
         <div class="input">
-          <input type="text" placeholder="请输入密码" />
+          <input type="password" placeholder="请输入密码" v-model="form.password" />
         </div>
         <div class="tip">必须包含字母、数字，可以包含西文符号（除空白符），长度为8-18个字符</div>
       </div>
       <div class="form-line">
         <div class="name">确认密码：</div>
         <div class="input">
-          <input type="text" placeholder="请再次确认密码" />
+          <input type="password" placeholder="请再次确认密码" v-model="confirmPassword" />
         </div>
       </div>
     </div>
 
     <div class="btn-submit">
-      <button>同意协议并创建账户</button>
+      <button @click="registerHandle">同意协议并创建账户</button>
     </div>
 
     <div class="agreement">
-      <input type="checkbox" />
+      <input type="checkbox" v-model="checkAgreement" />
       已阅读并同意【用户服务协议】和【隐私政策】
     </div>
   </div>
@@ -96,7 +176,7 @@ const login = () => {
     display: flex;
     align-items: center;
     .name {
-      width: 100px;
+      width: 140px;
       font-size: 18px;
       font-weight: bold;
       text-align: right;
@@ -119,6 +199,10 @@ const login = () => {
       line-height: 50px;
       font-size: 18px;
       padding: 0 15px;
+      // max-width: 40%;
+      white-space: nowrap; /*文本一行显示，normal是自动换行*/
+      overflow: hidden; /*溢出部分隐藏*/
+      text-overflow: ellipsis; /*文字溢出时用省略号显示*/
     }
     .other {
       margin-left: 20px;

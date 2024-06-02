@@ -84,7 +84,9 @@
 }
 
 .frame {
-  padding: 0 20px;
+  padding: 0px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
   .header {
     font-size: 48px;
     color: #db0a9f;
