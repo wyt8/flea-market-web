@@ -9,7 +9,7 @@ const responseCode = {
 }
 
 const httpInstance = axios.create({
-  baseURL: 'http://127.0.0.1:4523/m1/4529224-4176864-default',
+  baseURL: 'http://119.8.97.65:8080',
   timeout: 5000
 })
 
@@ -29,14 +29,14 @@ httpInstance.interceptors.request.use(
 // 响应拦截器
 httpInstance.interceptors.response.use(
   (res) => {
-    if (res.data.code === responseCode.NotLogin) {
-      MessagePlugin.error(res.data.msg)
-      router.push({ name: 'login' })
-    }
-    if (res.data.code === responseCode.TokenTimeout) {
-      MessagePlugin.error(res.data.msg)
-      router.push({ name: 'login' })
-    }
+    // if (res.data.code === responseCode.NotLogin) {
+    //   MessagePlugin.error(res.data.msg)
+    //   router.push({ name: 'login' })
+    // }
+    // if (res.data.code === responseCode.TokenTimeout) {
+    //   MessagePlugin.error(res.data.msg)
+    //   router.push({ name: 'login' })
+    // }
     return res.data
   },
   (err) => {

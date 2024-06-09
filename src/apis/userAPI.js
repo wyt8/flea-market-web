@@ -24,8 +24,18 @@ const sendVerificationCode = (bit_id) => {
   })
 }
 
+const forgetPassword = ({ bit_id, password, verification_code }) => {
+  password = md5(password)
+  return httpInstance.post('/users/modify_password', {
+    bit_id,
+    password,
+    verification_code
+  })
+}
+
 export default {
   login,
   register,
-  sendVerificationCode
+  sendVerificationCode,
+  forgetPassword
 }

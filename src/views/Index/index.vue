@@ -4,10 +4,7 @@
   <t-swiper animation="fade" :height="350">
     <t-swiper-item v-for="item in 1" :key="item">
       <div class="poster">
-        <img
-          src="https://www.bit.edu.cn/images/2021-01/e4c21e05bbc34344a74167cb2f9d6d12.jpg"
-          alt=""
-        />
+        <img src="@/assets/imgs/poster.jpg" alt="" />
         <div class="text">BIT跳蚤市场</div>
       </div>
     </t-swiper-item>

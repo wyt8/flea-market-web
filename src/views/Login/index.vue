@@ -74,7 +74,7 @@ const loginHandle = async () => {
         <input type="checkbox" />
         记住密码
       </div>
-      <div class="forget-password"><a>忘记密码？</a></div>
+      <div class="forget-password"><a href="/forgetpassword">忘记密码？</a></div>
     </div>
   </div>
 </template>

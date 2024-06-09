@@ -5,6 +5,7 @@ import LoginIndex from '@/views/Login/index.vue'
 import RegisterIndex from '@/views/Register/index.vue'
 import IndexIndex from '@/views/Index/index.vue'
 import GoodsIndex from '@/views/Goods/index.vue'
+import ForgetPasswordIndex from '@/views/ForwardPassword/index.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +38,11 @@ const router = createRouter({
           path: 'goods',
           name: 'goods',
           component: GoodsIndex
+        },
+        {
+          path: 'forgetpassword',
+          name: 'forgetpassword',
+          component: ForgetPasswordIndex
         }
       ]
     }

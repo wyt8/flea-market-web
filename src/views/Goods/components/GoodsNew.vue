@@ -4,7 +4,6 @@ import { ref } from 'vue'
 import uploadAPI from '@/apis/uploadAPI'
 import goodsAPI from '@/apis/goodsAPI'
 import axios from 'axios'
-import { v4 as uuidv4 } from 'uuid'
 import { MessagePlugin } from 'tdesign-vue-next'
 
 const props = defineProps({
@@ -16,7 +15,6 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const media = ref([])
-const policy = ref({})
 const mediaAction = ref('')
 // 上传文件前的校验
 const beforeUpload = async (rawFile) => {
@@ -37,19 +35,7 @@ const beforeUpload = async (rawFile) => {
     MessagePlugin.error('视频大小必须小于100MB')
     return false
   }
-
-  const res = await uploadAPI.upload()
-  if (res.code === 0) {
-    policy.value.OSSAccessKeyId = res.data.accessid
-    policy.value.success_action_status = '200'
-    policy.value.signature = res.data.signature
-    policy.value.policy = res.data.policy
-    policy.value.key = res.data.dir + uuidv4() + '.' + fileExt
-    mediaAction.value = res.data.host
-    rawFile.url = mediaAction.value + '/' + policy.value.key
-    return true
-  }
-  return false
+  return true
 }
 
 const formData = ref({
@@ -64,46 +50,31 @@ const formData = ref({
   images: []
 })
 
-// const httpRequest = (param) => {
-//   let fd = new FormData()
-//   console.log(param[0])
-//   fd.append('OSSAccessKeyId', policy.value.OSSAccessKeyId)
-//   fd.append('success_action_status', policy.value.success_action_status)
-//   fd.append('signature', policy.value.signature)
-//   fd.append('policy', policy.value.policy)
-//   fd.append('key', policy.value.key)
-//   fd.append('file', param[0].raw) // 传文件
-
-//   axios
-//     .post(mediaAction.value, fd, {
-//       headers: { 'Content-Type': 'multipart/form-data' }, //定义内容格式,很重要
-//       timeout: 5000
-//     })
-//     .then((res) => {
-//       newMoment.value.imgs.push(mediaAction.value + '/' + policy.value.key)
-//       return { status: 'success', response: { url: imgAction.value + '/' + policy.value.key } }
-//       //接口成功调用params上的onSuccess函数，会触发默认的successHandler函数
-//       //这样可以用自带的ui等
-//       ///params.onSuccess({name: 'eric'})
-//     })
-//     .catch((err) => {
-//       return { status: 'fail', error: '上传失败' }
-//     })
-// }
+const httpRequest = async (files) => {
+  console.log(files)
+  console.log(files[0])
+  const res = await uploadAPI.uploadImg(files[0].raw)
+  if (res.code === 0) {
+    formData.value.images.push(res.url)
+    return { status: 'success', response: { url: res.url } }
+  } else {
+    return { status: 'fail', error: '上传失败' }
+  }
+}
 
 const addGoods = async () => {
   if (formData.value.name.length === 0 || formData.value.description.length === 0) {
     MessagePlugin.warning({ content: '标题和内容不能为空', duration: 1000 })
     return
   }
-  // if (media.value.length === 0) {
-  //   MessagePlugin.warning({ content: '至少上传一张图片', duration: 1000 })
-  //   return
-  // } else {
-  //   media.value.forEach((item) => {
-  //     formData.value.images.push(item.url)
-  //   })
-  // }
+  if (media.value.length === 0) {
+    MessagePlugin.warning({ content: '至少上传一张图片', duration: 1000 })
+    return
+  } else {
+    media.value.forEach((item) => {
+      formData.value.images.push(item.url)
+    })
+  }
   const res = await goodsAPI.addGoods(formData.value)
   if (res.code === 0) {
     MessagePlugin.success({ content: '发布成功', duration: 1000 })
@@ -143,11 +114,6 @@ const handleSuccess = ({ file }) => {
   MessagePlugin.success(`文件 ${file.name} 上传成功`)
 }
 
-const formatResponse = (res, { file }) => {
-  console.log(file)
-  return { url: file.url, status: file.status }
-}
-
 const purchase_method_options = ref([
   { label: '上门取货', value: 'pickup' },
   { label: '快递', value: 'express' },
@@ -183,14 +149,12 @@ const product_category_options = ref([
           v-model="media"
           theme="image"
           accept="image/*"
-          :action="mediaAction"
           :beforeUpload="beforeUpload"
           :show-image-file-name="false"
-          :data="policy"
+          :requestMethod="httpRequest"
           multiple
           :max="9"
           tips="最多可以选择9张图片"
-          :formatResponse="formatResponse"
           @fail="handleFail"
           @success="handleSuccess"
         ></t-upload>

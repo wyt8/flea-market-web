@@ -65,7 +65,7 @@ const viewSpace = () => {
         <!-- 登录成功的弹出窗 -->
         <t-popup v-if="userStore.userInfo.token && userStore.userInfo.token.length !== 0">
           <template #default>
-            <t-avatar :image="userStore.userInfo.avatar_url" size="large"></t-avatar>
+            <t-avatar :image="userStore.userInfo.avatar_url" size="60px"></t-avatar>
           </template>
           <template #content>
             <div class="popover-container">
