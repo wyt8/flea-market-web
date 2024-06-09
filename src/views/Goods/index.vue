@@ -30,14 +30,14 @@ const params = ref({
 })
 const getGoodsList = async () => {
   const res = await goodsAPI.getGoodsList(params.value)
-  // if (res.code === 0) {
-  goodsList.value = res.data.products
-  totalGoodsNum.value = res.data.total_num
-  const goodsListLen = goodsList.value.length
-  if (goodsListLen > 0) {
-    params.value.last_product_id = goodsList.value[goodsListLen - 1].product_id
+  if (res.code === 0) {
+    goodsList.value = res.data.products
+    totalGoodsNum.value = res.data.total_num
+    const goodsListLen = goodsList.value.length
+    if (goodsListLen > 0) {
+      params.value.last_product_id = goodsList.value[goodsListLen - 1].product_id
+    }
   }
-  // }
 }
 
 onMounted(async () => {

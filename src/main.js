@@ -23,7 +23,12 @@ const app = createApp(App)
 const vfm = createVfm()
 app.use(vfm)
 
-app.use(createPinia())
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+
+app.use(pinia)
 app.use(router)
 
 app.mount('#app')
