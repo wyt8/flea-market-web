@@ -6,6 +6,10 @@ import RegisterIndex from '@/views/Register/index.vue'
 import IndexIndex from '@/views/Index/index.vue'
 import GoodsIndex from '@/views/Goods/index.vue'
 import ForgetPasswordIndex from '@/views/ForwardPassword/index.vue'
+import messageIndex from '@/views/message/message.vue'
+import profileIndex  from '@/views/profile/profile.vue'
+import historyIndex from'@/views/Goods/components/GoodsHistory.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,6 +47,21 @@ const router = createRouter({
           path: 'forgetpassword',
           name: 'forgetpassword',
           component: ForgetPasswordIndex
+        },
+        {
+          path: 'message',
+          name: 'message',
+          component: messageIndex
+        },
+        {
+          path: 'space',
+          name: 'space',
+          component: profileIndex
+        },
+        {
+          path: 'history',
+          name: 'history',
+          component: historyIndex
         }
       ]
     }

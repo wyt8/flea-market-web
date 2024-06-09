@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import router from '@/router/index'
 import goodsAPI from '@/apis/goodsAPI'
+import chatAPI from '@/apis/chatAPI'
 import { useUserStore } from '@/stores/user'
 import { MessagePlugin } from 'tdesign-vue-next'
 import { CloseIcon } from 'tdesign-icons-vue-next'
@@ -28,7 +29,7 @@ const productData = ref({
   updated_time: '',
   images: [
     {
-      image_url: ''
+      imageUrl: ''
     }
   ],
   labels: [
@@ -41,14 +42,12 @@ const productData = ref({
 const viewGoods = async () => {
   const res = await goodsAPI.viewGoods(props.product_id)
   productData.value = res.data
-}
 
-const viewSpace = () => {
-  const href = router.resolve({
-    name: 'space',
-    params: { uid: productData.value.publisher.user_id }
-  }).href
-  window.open(href, '_blank')
+  const a =
+    productData.value.publisher.user_id === userStore.userInfo.user_id ||
+    productData.value.publisher.user_id === -1
+
+  console.log(a)
 }
 
 onMounted(() => {
@@ -66,13 +65,15 @@ const close = () => {
 const images = computed(() => {
   let res = []
   productData.value.images.forEach((item) => {
-    res.push(item.image_url)
+    res.push(item.imageUrl)
   })
   return res
 })
 
-const sendMessageHandle = () => {
+const sendMessageHandle = async () => {
   if (userStore.userInfo.token && userStore.userInfo.token.length !== 0) {
+    const res = await chatAPI.sendmessage(productData.value.publisher.user_id, 'hello')
+    router.push({ name: 'message' })
   } else {
     MessagePlugin.warning('请先登录')
   }
@@ -100,7 +101,7 @@ const sendMessageHandle = () => {
             <swiper-slide v-for="(item, index) in productData.images" :key="index">
               <t-image
                 @click="open"
-                :src="item.image_url"
+                :src="item.imageUrl"
                 :preview-src-list="images"
                 :preview-teleported="true"
                 fit="contain"
@@ -116,7 +117,7 @@ const sendMessageHandle = () => {
     <!-- 右边内容展示区 -->
     <div class="right-container">
       <div class="header-row">
-        <a href="javascript:;" class="author" @click.prevent="viewSpace">
+        <a href="javascript:;" class="author">
           <img :src="productData.publisher.avatar_url" class="avatar" />
           <span>{{ productData.publisher.name }}</span>
         </a>
@@ -172,7 +173,15 @@ const sendMessageHandle = () => {
           </div>
 
           <t-divider></t-divider>
-          <t-button block shape="round" variant="outline" @click="sendMessageHandle"
+          <t-button
+            block
+            shape="round"
+            variant="outline"
+            @click="sendMessageHandle"
+            :disabled="
+              productData.publisher.user_id === userStore.userInfo.user_id ||
+              productData.publisher.user_id === -1
+            "
             >立即聊天</t-button
           >
         </div>

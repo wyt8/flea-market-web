@@ -29,6 +29,9 @@ const register = () => {
 const viewSpace = () => {
   router.push({ name: 'space', params: { uid: userStore.userInfo.uid } })
 }
+const viewgoodshistory = () => {
+  router.push({ name: 'history', params: { uid: userStore.userInfo.uid } })
+}
 </script>
 
 <template>
@@ -83,6 +86,15 @@ const viewSpace = () => {
                     <span>
                       <span class="iconfont icon-user"></span>
                       <span class="btn-text">个人中心</span>
+                    </span>
+                    <span class="iconfont icon-right"></span>
+                  </button>
+                </li>
+                <li>
+                  <button @click="viewgoodshistory">
+                    <span>
+                      <span class="iconfont icon-history"></span>
+                      <span class="btn-text">商品发布历史</span>
                     </span>
                     <span class="iconfont icon-right"></span>
                   </button>

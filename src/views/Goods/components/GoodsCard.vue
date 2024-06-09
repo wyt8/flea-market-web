@@ -23,7 +23,7 @@ const props = defineProps(['cover_image_url', 'name', 'price', 'date', 'product_
 .card-container {
   width: 250px;
   height: 350px;
-  background-color: beige;
+  background-color: #fefefe;
   border-radius: 10px;
   overflow: hidden;
   transition: all 0.3s;

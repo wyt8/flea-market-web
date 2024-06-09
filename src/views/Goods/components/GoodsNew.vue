@@ -55,8 +55,8 @@ const httpRequest = async (files) => {
   console.log(files[0])
   const res = await uploadAPI.uploadImg(files[0].raw)
   if (res.code === 0) {
-    formData.value.images.push(res.url)
-    return { status: 'success', response: { url: res.url } }
+    media.value.push(res.data)
+    return { status: 'success', response: { url: res.data } }
   } else {
     return { status: 'fail', error: '上传失败' }
   }
@@ -72,9 +72,17 @@ const addGoods = async () => {
     return
   } else {
     media.value.forEach((item) => {
-      formData.value.images.push(item.url)
+      formData.value.images.push(item)
     })
   }
+
+  for (let item of purchase_method_options.value) {
+    if (item.label === formData.value.purchase_method) {
+      formData.value.purchase_method = item.value
+      break
+    }
+  }
+
   const res = await goodsAPI.addGoods(formData.value)
   if (res.code === 0) {
     MessagePlugin.success({ content: '发布成功', duration: 1000 })
@@ -146,7 +154,6 @@ const product_category_options = ref([
     <div class="new-container">
       <div class="media-container">
         <t-upload
-          v-model="media"
           theme="image"
           accept="image/*"
           :beforeUpload="beforeUpload"
@@ -210,19 +217,6 @@ const product_category_options = ref([
               suffix="个"
               :autoWidth="true"
             />
-          </t-form-item>
-          <t-form-item label="商品标签" name="labels">
-            <t-popup
-              destroy-on-close
-              trigger="focus"
-              :overlay-inner-style="(triggerElem) => ({ width: `${triggerElem.offsetWidth}px` })"
-              placement="bottom"
-            >
-              <template #default>
-                <t-tag-input v-model="formData.labels" :max="5" />
-              </template>
-              <template #content> 12341341234 </template>
-            </t-popup>
           </t-form-item>
           <t-form-item label="商品描述" name="descirption">
             <t-textarea
