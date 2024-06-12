@@ -72,7 +72,10 @@ const images = computed(() => {
 
 const sendMessageHandle = async () => {
   if (userStore.userInfo.token && userStore.userInfo.token.length !== 0) {
-    const res = await chatAPI.sendmessage(productData.value.publisher.user_id, 'hello')
+    const res = await chatAPI.sendmessage(
+      productData.value.publisher.user_id,
+      '对你的发布的商品感兴趣，方便聊聊吗？'
+    )
     router.push({ name: 'message' })
   } else {
     MessagePlugin.warning('请先登录')

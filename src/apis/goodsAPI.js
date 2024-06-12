@@ -40,8 +40,41 @@ const viewGoods = (product_id) => {
   return httpInstance.get(`/products/${product_id}`)
 }
 
+const soldOutGoods = (product_id) => {
+  return httpInstance.post(`/products/${product_id}/status`)
+}
+
+const modGoods = (
+  product_id,
+  {
+    name,
+    price,
+    purchase_method,
+    product_category,
+    inventory,
+    description,
+    is_anonymous,
+    images,
+    labels
+  }
+) => {
+  return httpInstance.post(`/products/${product_id}`, {
+    name,
+    price,
+    purchase_method,
+    product_category,
+    inventory,
+    description,
+    is_anonymous,
+    images,
+    labels
+  })
+}
+
 export default {
   getGoodsList,
   addGoods,
-  viewGoods
+  viewGoods,
+  soldOutGoods,
+  modGoods
 }

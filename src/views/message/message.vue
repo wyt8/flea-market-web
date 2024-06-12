@@ -4,7 +4,12 @@
       <div class="chat-sidebar">
         <h3>Friends</h3>
         <ul class="friend-list">
-          <li v-for="friend in friends" :key="friend.id" @click="selectFriend(friend)">
+          <li
+            v-for="friend in friends"
+            :key="friend.id"
+            @click="selectFriend(friend)"
+            :class="{ selected: friend.user_id === selectedFriend.user_id }"
+          >
             <img :src="friend.avatar_url" alt="avatar" class="avatar" />
             {{ friend.name }}
           </li>
@@ -59,6 +64,7 @@ import { getFriendsList } from '@/apis/friendAPI'
 import { getChatHistory } from '@/apis/chatAPI'
 import chatAPI from '@/apis/chatAPI'
 import { useUserStore } from '@/stores/user'
+import { MessagePlugin } from 'tdesign-vue-next'
 export default {
   name: 'Chat',
   data() {
@@ -71,7 +77,16 @@ export default {
     }
   },
   created() {
-    this.getfriends()
+    this.getfriends(),
+      window.setInterval(async () => {
+        if (this.selectedFriend.user_id) {
+          const response = await getChatHistory(this.selectedFriend.user_id)
+          if (this.messages.length !== response.data.messages.length) {
+            // MessagePlugin.info({ content: '收到了新消息，请查收', duration: 1000 })
+            this.messages = response.data.messages
+          }
+        }
+      }, 1000)
   },
   computed: {
     isDisabled() {
@@ -117,7 +132,7 @@ export default {
     },
     formatTimestamp(timestamp) {
       const date = new Date(timestamp)
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      return date.toLocaleString()
     }
   }
 }
@@ -161,6 +176,10 @@ export default {
   cursor: pointer;
   border-radius: 5px;
   transition: background-color 0.3s;
+}
+
+.selected {
+  background-color: #ddd;
 }
 
 .friend-list li:hover {
@@ -246,6 +265,13 @@ export default {
   max-width: 90%;
   min-width: 150px;
   line-break: anywhere;
+  font-size: 18px;
+  font-weight: bold;
+}
+.message-text .timestamp {
+  color: #999;
+  font-size: 12px;
+  font-weight: normal;
 }
 
 .chat-input {

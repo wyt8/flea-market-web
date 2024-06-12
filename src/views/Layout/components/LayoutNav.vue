@@ -12,6 +12,7 @@ const logout = () => {
     theme: 'warning',
     onConfirm: () => {
       userStore.clearUserInfo()
+      router.push({ name: 'login' })
       MessagePlugin.success('期待下次再见!')
       confirmDialog.hide()
     }
@@ -57,7 +58,10 @@ const viewgoodshistory = () => {
             >
           </li>
           <li>
-            <RouterLink to="/message" active-class="active"
+            <RouterLink
+              to="/message"
+              active-class="active"
+              v-if="userStore.userInfo.token && userStore.userInfo.token.length !== 0"
               ><span class="iconfont icon-xiaoxi"></span>消息</RouterLink
             >
           </li>
